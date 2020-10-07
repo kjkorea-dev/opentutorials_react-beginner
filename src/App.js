@@ -8,7 +8,8 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      mode: 'contents',
+      mode: 'welcome',
+      selected_content_id: 1,
       subject: { title: 'WEB', sub: 'World Wide Web!' },
       welcome: { title: 'Welcome', desc: 'Hello React'},
       contents: [
@@ -24,9 +25,14 @@ class App extends Component {
     if (this.state.mode === 'welcome') {
       _title = this.state.welcome.title;
       _desc = this.state.welcome.desc;
-    } else {
-      _title = this.state.contents[0].title;
-      _desc = this.state.contents[0].desc;
+    } else if (this.state.mode === 'read') {
+      var _contents = this.state.contents;
+      var _content = _contents.filter((content) => {
+        return content.id === parseInt(this.state.selected_content_id);
+      }).pop();
+      // console.log(_content);
+      _title = _content.title;
+      _desc = _content.desc;
     }
     
     return (
@@ -38,7 +44,13 @@ class App extends Component {
             this.setState({mode: 'welcome'})
           }.bind(this)}>
         </Subject>
-        <TOC data={ this.state.contents }></TOC>
+        <TOC data={ this.state.contents }
+          onChangeContent={function(selected_content_id) {
+            this.setState({
+              mode: 'read', 
+              selected_content_id: selected_content_id
+            })
+          }.bind(this)}></TOC>
         <Content title={_title} desc={_desc}></Content>
       </div>
     )
