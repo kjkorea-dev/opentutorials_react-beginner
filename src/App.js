@@ -49,7 +49,13 @@ class App extends Component {
         // this.setState({ contents: this.state.contents });
 
         // Style.2 : 복제본생성 - 성능유리 : shouldComponentUpdate 를 통해 렌더링 컨트롤이 가능
-        var _contents = this.state.contents.concat(
+        // #1. concat
+        // var _contents = this.state.contents.concat(
+        //   {id: this.max_content_id, title: title, desc: desc}
+        // );
+        // #2. Array.from()
+        var _contents = Array.from(this.state.contents);
+        _contents.push(
           {id: this.max_content_id, title: title, desc: desc}
         );
         this.setState({ contents: _contents });
