@@ -29,9 +29,6 @@ class App extends Component {
     var _content = _contents.filter((content) => {
       return content.id === parseInt(this.state.selected_content_id);
     }).pop();
-    // console.log(_content);
-    // _title = _content.title;
-    // _desc = _content.desc;
     return _content;
   }
 
@@ -106,10 +103,28 @@ class App extends Component {
               selected_content_id: selected_content_id
             })
           }.bind(this)}></TOC>
-        <Control onChangeMode={function(mode){
-          this.setState({
-            mode: mode
-          });
+        <Control onChangeMode={function(mode) {
+          if (mode === 'delete') {
+            if (window.confirm('seriously?')) {
+              var that = this;
+              var _contents = this.state.contents.filter(function(v, i) {
+                return v.id !== that.state.selected_content_id;
+                // return true;
+              });
+
+              this.setState({ 
+                contents: _contents,
+                mode: 'welcome'
+              });
+
+              alert('deleted');
+            } 
+          } else {
+            this.setState({
+              mode: mode
+            });
+          }
+
         }.bind(this)}></Control>
         {this.getContent()}
       </div>
