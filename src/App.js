@@ -3,6 +3,7 @@ import Subject from "./components/Subject";
 import TOC from "./components/TOC";
 import ReadContent from "./components/ReadContent";
 import CreateContent from "./components/CreateContent";
+import UpdateContent from "./components/UpdateContent";
 import Control from './components/Control'
 import './App.css';
 
@@ -10,7 +11,7 @@ class App extends Component {
   constructor(props) {
     super(props);    
     this.state = {
-      mode: 'create',
+      mode: 'welcome',
       selected_content_id: 1,
       subject: { title: 'WEB', sub: 'World Wide Web!' },
       welcome: { title: 'Welcome', desc: 'Hello React'},
@@ -23,21 +24,28 @@ class App extends Component {
     this.max_content_id = 3;
   }
 
-  render() {
+  getReadContent() {
+    var _contents = this.state.contents;
+    var _content = _contents.filter((content) => {
+      return content.id === parseInt(this.state.selected_content_id);
+    }).pop();
+    // console.log(_content);
+    // _title = _content.title;
+    // _desc = _content.desc;
+    return _content;
+  }
+
+  getContent() {
     var _title, _desc, _article = null;    
     if (this.state.mode === 'welcome') {
       _title = this.state.welcome.title;
       _desc = this.state.welcome.desc;
       _article = <ReadContent title={_title} desc={_desc}></ReadContent>;
+
     } else if (this.state.mode === 'read') {
-      var _contents = this.state.contents;
-      var _content = _contents.filter((content) => {
-        return content.id === parseInt(this.state.selected_content_id);
-      }).pop();
-      // console.log(_content);
-      _title = _content.title;
-      _desc = _content.desc;      
-      _article = <ReadContent title={_title} desc={_desc}></ReadContent>;
+      var _content = this.getReadContent();
+      _article = <ReadContent title={_content.title} desc={_content.desc}></ReadContent>;
+
     } else if (this.state.mode === 'create') {
       _article = <CreateContent onSubmit={function(title, desc) {
         this.max_content_id += 1;
@@ -58,10 +66,30 @@ class App extends Component {
         _contents.push(
           {id: this.max_content_id, title: title, desc: desc}
         );
-        this.setState({ contents: _contents });
+        this.setState({
+          selected_content_id: this.max_content_id, 
+          mode: 'read',
+          contents: _contents
+        });
       }.bind(this)}></CreateContent>
+
+    } else if (this.state.mode === 'update') {
+      _content = this.getReadContent();
+      _article = <UpdateContent data={_content} onSubmit={function(id, title, desc) {
+        var _contents = this.state.contents.map(function(v, i) {
+          return v.id === id ? {id: id, title: title, desc: desc} : v ;
+        });
+        this.setState({ 
+          contents: _contents,
+          mode: 'read'
+        });
+      }.bind(this)}></UpdateContent>
     }
 
+    return _article;
+  }
+
+  render() {
     return (
       <div className="App">
         <Subject 
@@ -83,7 +111,7 @@ class App extends Component {
             mode: mode
           });
         }.bind(this)}></Control>
-        {_article}
+        {this.getContent()}
       </div>
     )
   }
