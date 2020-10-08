@@ -1,1 +1,3 @@
-# learning-react-beginner-opentutorials
+# Learn react
+
+* Youtube playlist : https://bit.ly/2FgRrQc
